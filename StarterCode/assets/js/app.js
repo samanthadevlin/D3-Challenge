@@ -40,6 +40,7 @@ function updateData(sel, data) {
 }
 
 // Import data from an external CSV file
+// parse data
 d3.csv("assets/data/data.csv").then((data) => {
     console.table(data.slice(0,3))
     let smolData = data.slice(0,3);
@@ -47,6 +48,34 @@ d3.csv("assets/data/data.csv").then((data) => {
     svg.attr("width", "600").attr("height", "400")
 
     let circles = svg.selectAll("circle");
+
+    //COPY AND PASTE FROM LECTURE FIX IT 
+    // create scales
+    var xLinearScale = d3.scaleTime()
+      .domain(d3.extent(medalData, d => d.date))
+      .range([0, width]);
+
+    var yLinearScale = d3.scaleLinear()
+      .domain([0, d3.max(medalData, d => d.medals)])
+      .range([height, 0]);
+
+    // create axes
+    var xAxis = d3.axisBottom(xTimeScale);
+    var yAxis = d3.axisLeft(yLinearScale).ticks(6);
+
+    // append circles
+    var circlesGroup = chartGroup.selectAll("circle")
+    .data(medalData)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xTimeScale(d.date))
+    .attr("cy", d => yLinearScale(d.medals))
+    .attr("r", "10")
+    .attr("fill", "gold")
+    .attr("stroke-width", "1")
+    .attr("stroke", "black");
+
+    // BELOW DONE W/ SONDRA 
 
     circles.data(smolData)
         .enter()
@@ -65,6 +94,8 @@ d3.csv("assets/data/data.csv").then((data) => {
     let sel = svg.selectAll("circle").data(lessSmolData);
 
     console.log(sel.data());
+
+     
 
     sel
         .enter()
